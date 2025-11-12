@@ -35,6 +35,11 @@ int main(int argc, const char* argv[]) {
 	if (!hThread)
 		return Error("Failed to create remote thread");
 
+	DWORD exitCode = 0;
+	WaitForSingleObject(hThread, 5000);
+	GetExitCodeThread(hThread, &exitCode);
+	printf("LoadLibrary in remote process, returned 0x%p\n", (void*)exitCode);
+
 	printf("Thread %u created successfully!\n", tid);
 	if (WAIT_OBJECT_0 == ::WaitForSingleObject(hThread, 5000))
 		printf("Thread exited.\n");
