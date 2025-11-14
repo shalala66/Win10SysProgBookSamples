@@ -11,7 +11,7 @@ int Error(const wchar_t* msg) {
 
 bool SearchModule(DWORD pid, const wchar_t* dllName) {
     bool found = false;
-    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, pid);
+    HANDLE snap = ::CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, pid);
 
     if (snap == INVALID_HANDLE_VALUE)
         return false;
@@ -19,7 +19,7 @@ bool SearchModule(DWORD pid, const wchar_t* dllName) {
     MODULEENTRY32W me;
     me.dwSize = sizeof(me);
 
-    if (Module32FirstW(snap, &me)) {
+    if (::Module32FirstW(snap, &me)) {
         do {
 			wprintf(L"Module name: \"%s\" \n", me.szModule);
 
@@ -27,10 +27,10 @@ bool SearchModule(DWORD pid, const wchar_t* dllName) {
                 found = true;
                 // break;
             }
-        } while (Module32NextW(snap, &me));
+        } while (::Module32NextW(snap, &me));
     }
 
-    CloseHandle(snap);
+    ::CloseHandle(snap);
     return found;
 }
 
