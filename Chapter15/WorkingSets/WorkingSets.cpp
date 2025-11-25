@@ -24,7 +24,8 @@ COLORREF WINAPI GetSysColorHooked(int index) {
 void HookFunctions() {
 	auto hUser32 = ::GetModuleHandle(L"user32");
 	// save original functions
-	GetSysColorOrg = (decltype(GetSysColorOrg))::GetProcAddress(hUser32, "GetSysColor");
+	if(hUser32)
+		GetSysColorOrg = (decltype(GetSysColorOrg))::GetProcAddress(hUser32, "GetSysColor");
 
 	auto count = IATHelper::HookAllModules("user32.dll", GetSysColorOrg, GetSysColorHooked);
 	ATLTRACE(L"Hooked %d calls to GetSysColor\n");
