@@ -28,10 +28,16 @@ int main(int argc, const char* argv[]) {
 	if (!::WriteProcessMemory(hProcess, buffer, argv[2], ::strlen(argv[2]) + 1, nullptr))
 		return Error("Failed to write to target process");
 
-	DWORD tid;
-	HANDLE hThread = ::CreateRemoteThread(hProcess, nullptr, 0, 
-		(LPTHREAD_START_ROUTINE)::GetProcAddress(::GetModuleHandle(L"kernel32"), "LoadLibraryA"), 
-		buffer, 0, &tid);
+	DWORD tid = 0;
+	HANDLE hThread = nullptr;
+	auto hKernel32 = ::GetModuleHandle(L"kernel32.dll");
+	if (hKernel32) {
+		
+		hThread = ::CreateRemoteThread(hProcess, nullptr, 0,
+			(LPTHREAD_START_ROUTINE)::GetProcAddress(hKernel32, "LoadLibraryA"),
+			buffer, 0, &tid);
+	}
+
 	if (!hThread)
 		return Error("Failed to create remote thread");
 
